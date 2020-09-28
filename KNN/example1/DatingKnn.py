@@ -1,6 +1,6 @@
 import numpy as np
-# import matplotlib
-# import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt
 
 
 def file2matrix(filename):
@@ -19,10 +19,6 @@ def file2matrix(filename):
     return returnMat, classLabelVector
 
 
-# [feature, classLabel] = file2matrix('F:\\python\\KNN\\DatingTestSet2.txt')
-# print(returnMat)
-
-
 def autoNorm(dataSet):
     minVals = dataSet.min(0)
     maxVals = dataSet.max(0)
@@ -34,13 +30,11 @@ def autoNorm(dataSet):
     return normDataSet, ranges, minVals
 
 
-# [DataSet, ranges, minVals] = autoNorm(feature)
-
-
-# fig = plt.figure()
-# ax = fig.add_subplot(111)
-# ax.scatter(feature[:, 0], feature[:, 1], 15.0*np.array(classLabel), 15.0*np.array(classLabel))
-# plt.show()
+[feature, classLabels] = file2matrix('KNN\\example1\\DatingTestSet2.txt')
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.scatter(feature[:, 0], feature[:, 1], 15.0*np.array(classLabels), 15.0*np.array(classLabels))
+plt.show()
 
 
 def classify0(inX, dataSet, labels, k):
@@ -58,19 +52,22 @@ def classify0(inX, dataSet, labels, k):
     return sortedClassCount[0][0]
 
 
-def anti_autoNorm(value, ranges, minVals):
-    inX = (value + minVals) * ranges
-    return inX
-
-
-def Knnclassify(data, filename):
-    [feature, classLabel] = file2matrix(filename)
+def datingClassTest():
+    hoRatio = 0.1
+    [feature, classLabels] = file2matrix('KNN\\example1\\DatingTestSet2.txt')
     [DataSet, ranges, minVals] = autoNorm(feature)
-    Inx = anti_autoNorm(data, ranges, minVals)
-    predict = classify0(Inx, DataSet, classLabel, 20)
-    return predict
+    m = DataSet.shape[0]
+    numTestVecs = int(m * hoRatio)
+    print('numTestVecs=', numTestVecs)
+    errorCount = 0.0
+    for i in range(numTestVecs):
+        classifierResult = classify0(DataSet[i, :], DataSet[numTestVecs:m, :], classLabels[numTestVecs:m], 3)
+        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, classLabels[i]))
+        if (classifierResult != classLabels[i]):
+            errorCount += 1.0
+    print("the total error rate is: %f" % (errorCount / float(numTestVecs)))
+    print(errorCount)
 
 
-handsome_man = [25000, 5, 1]
-pred = Knnclassify(handsome_man, 'F:\\python\\KNN\\DatingTestSet2.txt')
-print(pred)
+if __name__ == '__main__':
+    datingClassTest()
