@@ -91,6 +91,8 @@ $$L_\infty(x_i,x_j)=\max\limits_{l}\left|x_{i}^{(l)}-x_{j}^{(l)}\right|$$
 
 ## **3 KNN项目案例**
 
+完整代码地址：<https://github.com/LuTiantian-0406/Machine-learning-matlab-python/blob/master/KNN/example1/DatingKnn.py>
+
 ### 3.1 项目案例1: 优化约会网站的配对效果
 
 #### ***3.1.1 项目概述***
@@ -202,8 +204,9 @@ def autoNorm(dataSet):
 >KNN算法
 
 KNN算法伪代码：
+
 ```txt
-for 每一个在数据集中的数据点: 
+for 每一个在数据集中的数据点:
     计算需要分类的数据点与该数据点的距离
     将距离排序: 从小到大
     选取前K个最短距离
@@ -231,7 +234,7 @@ def classify0(inX, dataSet, labels, k):
 
 ```python
 def datingClassTest():
-        """
+    """
     Desc:
         对约会网站的测试方法
     parameters:
@@ -259,14 +262,108 @@ if __name__ == '__main__':
     datingClassTest()
 ```
 
-### example2用于识别手写数字
+### 3.2 项目案例2: 手写数字识别系统
 
-具体讲解后续再码
+完整代码地址：<https://github.com/LuTiantian-0406/Machine-learning-matlab-python/blob/master/KNN/example2/WritingKnn.py>
 
-完整代码地址：<https://github.com/LuTiantian-0406/Machine-learning-matlab-python/blob/master/KNN/example1/DatingKnn.py>
+#### ***3.2.1 项目概述***
+
+构造一个能识别数字 0 到 9 的基于 KNN 分类器的手写数字识别系统。需要识别的数字是存储在文本文件中的具有相同的色彩和大小: 宽高是 32 像素 * 32 像素的黑白图像。
+
+#### ***3.2.2 代码***
+
+>准备数据: 编写函数 img2vector(), 将图像文本数据转换为分类器使用的向量
+
+```python
+def img2vector(filename):
+    returnvect = np.zeros((1, 1024))
+    data = open(filename)
+    for i in range(32):
+        lineStr = data.readline()
+        for j in range(32):
+            returnvect[0, 32 * i + j] = int(lineStr[j])
+    return returnvect
+```
+
+>KNN算法：同项目一
+
+```python
+def classify0(inX, dataSet, labels, k):
+    dataSetSize = dataSet.shape[0]
+    diffMat = np.tile(inX, (dataSetSize, 1)) - dataSet
+    sqDiffMat = diffMat**2
+    sqDistances = sqDiffMat.sum(axis=1)
+    distances = sqDistances**0.5
+    sortedDistIndicies = distances.argsort()
+    classCount = {}
+    for i in range(k):
+        voteIlabel = labels[sortedDistIndicies[i]]
+        classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
+    sortedClassCount = sorted(classCount.items(),
+                              key=lambda item: item[1],
+                              reverse=True)
+    return sortedClassCount[0][0]
+```
+
+>测试算法
+
+```python
+def handwritingClassTest():
+    # 1. 导入训练数据
+    hwLabels = []
+    trainingFileList = os.listdir('KNN\\example2\\trainingDigits')
+    m = len(trainingFileList)
+    trainingMat = np.zeros((m, 1024))
+    # hwLabels存储0～9对应的index位置， trainingMat存放的每个位置对应的图片向量
+    for i in range(m):
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
+        hwLabels.append(classNumStr)  # 将 32*32的矩阵->1*1024的矩阵
+        trainingMat[i, :] = img2vector('KNN\\example2\\trainingDigits\\%s' % fileNameStr)
+
+    # 2. 导入测试数据
+    testFileList = os.listdir('KNN\\example2\\testDigits')
+    errorCount = 0.0
+    mTest = len(testFileList)
+    for i in range(mTest):
+        fileNameStr = testFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
+        vectorUnderTest = img2vector('KNN\\example2\\testDigits\\%s' % fileNameStr)
+        classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
+        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr))
+        if (classifierResult != classNumStr):
+            errorCount += 1.0
+    print("\nthe total number of errors is: %d" % errorCount)
+    print("\nthe total error rate is: %f" % (errorCount / float(mTest)))
+
+
+if __name__ == "__main__":
+    handwritingClassTest()
+```
+
+## **4 KNN小结**
+
+KNN 是什么？定义: 监督学习？ 非监督学习？
+
+KNN 是一个简单的无显示学习过程，非泛化学习的监督学习模型。在分类和回归中均有应用。
+
+### 4.1 算法: （sklearn 上有三种）
+* Brute Force 暴力计算/线性扫
+* KD Tree 使用二叉树根据数据维度来平分参数空间。
+* Ball Tree 使用一系列的超球体来平分训练数据集。
+
+***
+
+* 作者：陆天天
+* Github地址：<https://github.com/LuTiantian-0406/Machine-learning-matlab-python>
+* 版权声明: 欢迎转载学习 => 请标注信息
+
+***
 
 参考文献
 
 1. <https://www.cnblogs.com/gemine/p/11130032.html>
-2. https://ailearning.apachecn.org/docs/ml/2.k-%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95.html
+2. <https://ailearning.apachecn.org/docs/ml/2.k-%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95.html>
 3. 李航《统计学习方法》

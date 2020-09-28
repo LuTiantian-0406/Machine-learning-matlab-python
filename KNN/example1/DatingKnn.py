@@ -1,6 +1,14 @@
+# -*- encoding: utf-8 -*-
+'''
+@File    :   DatingKnn.py
+@Time    :   2020/09/28 17:28:36
+@Author  :   陆天天
+@Version :   1.0
+@Contact :   18857917788@163.com
+'''
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 
 
 def file2matrix(filename):
@@ -30,11 +38,11 @@ def autoNorm(dataSet):
     return normDataSet, ranges, minVals
 
 
-[feature, classLabels] = file2matrix('KNN\\example1\\DatingTestSet2.txt')
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.scatter(feature[:, 0], feature[:, 1], 15.0*np.array(classLabels), 15.0*np.array(classLabels))
-plt.show()
+# [feature, classLabels] = file2matrix('KNN\\example1\\DatingTestSet2.txt')
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+# ax.scatter(feature[:, 0], feature[:, 1], 15.0*np.array(classLabels), 15.0*np.array(classLabels))
+# plt.show()
 
 
 def classify0(inX, dataSet, labels, k):

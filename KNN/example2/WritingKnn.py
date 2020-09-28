@@ -1,3 +1,11 @@
+# -*- encoding: utf-8 -*-
+'''
+@File    :   WritingKnn.py
+@Time    :   2020/09/28 17:30:12
+@Author  :   陆天天
+@Version :   1.0
+@Contact :   18857917788@163.com
+'''
 import numpy as np
 import os
 
@@ -35,9 +43,9 @@ def classify0(inX, dataSet, labels, k):
 
 
 def handwritingClassTest():
-    #1. 导入训练数据
+    # 1. 导入训练数据
     hwLabels = []
-    trainingFileList = os.listdir('F:\\python\\KNN\\example2\\trainingDigits')
+    trainingFileList = os.listdir('KNN\\example2\\trainingDigits')
     m = len(trainingFileList)
     trainingMat = np.zeros((m, 1024))
     for i in range(m):
@@ -46,23 +54,24 @@ def handwritingClassTest():
         classNumStr = int(fileStr.split('_')[0])
         hwLabels.append(classNumStr)
         trainingMat[i, :] = img2vector(
-            'F:\\python\\KNN\\example2\\trainingDigits\\%s' % fileNameStr)
+            'KNN\\example2\\trainingDigits\\%s' % fileNameStr)
 
     # 2. 导入测试数据
-    testFileList = os.listdir('F:\\python\\KNN\\example2\\testDigits')
+    testFileList = os.listdir('KNN\\example2\\testDigits')
     errorCount = 0.0
     mTest = len(testFileList)
     for i in range(mTest):
         fileNameStr = testFileList[i]
         fileStr = fileNameStr.split('.')[0]
         classNumStr = int(fileStr.split('_')[0])
-        vectorUnderTest = img2vector('F:\\python\\KNN\\example2\\testDigits\\%s' % fileNameStr)
+        vectorUnderTest = img2vector('KNN\\example2\\testDigits\\%s' % fileNameStr)
         classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
         print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr))
         if (classifierResult != classNumStr):
             errorCount += 1.0
     print("\nthe total number of errors is: %d" % errorCount)
     print("\nthe total error rate is: %f" % (errorCount / float(mTest)))
+
 
 if __name__ == "__main__":
     handwritingClassTest()
